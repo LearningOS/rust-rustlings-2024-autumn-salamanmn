@@ -142,21 +142,6 @@ where
 
         //     Some(top)
         // }
-        if self.count == 0 {
-            return None;
-        }
-
-        // 从堆中移除最后一个元素，并将其与堆顶元素交换
-        self.items.swap(0, self.count - 1);
-        let removed_item = self.items.pop().unwrap();
-
-        // 调整堆以修复堆结构
-        self.count -= 1;
-        if self.count > 0 {
-            self.heapify_down(0);
-        }
-
-        Some(removed_item)
     }
 }
 
