@@ -2,7 +2,6 @@
 	queue
 	This question requires you to use queues to implement the functionality of the stac
 */
-// I AM NOT DONE
 
 #[derive(Debug)]
 pub struct Queue<T> {
@@ -68,14 +67,34 @@ impl<T> myStack<T> {
     }
     pub fn push(&mut self, elem: T) {
         //TODO
+        self.q1.enqueue(elem);
     }
     pub fn pop(&mut self) -> Result<T, &str> {
         //TODO
-		Err("Stack is empty")
+        while self.q1.size() > 1{
+            if let Ok(elem_stack) = self.q1.dequeue() {
+                self.q2.enqueue(elem_stack);
+            } 
+        }
+
+        let result = match self.q1.dequeue() {
+            Ok(ok) => Ok(ok),
+            Err(err) => Err("Stack is empty")
+        };
+
+        while let Ok(elem_stack) = self.q2.dequeue()  {
+          self.q1.enqueue(elem_stack);  
+        }
+
+        result
     }
     pub fn is_empty(&self) -> bool {
 		//TODO
-        true
+        if self.q1.is_empty() && self.q2.is_empty() {
+            true
+        } else {
+            false
+        }
     }
 }
 

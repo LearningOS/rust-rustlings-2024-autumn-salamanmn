@@ -38,6 +38,9 @@ where
 
     pub fn add(&mut self, value: T) {
         //TODO
+        self.items.push(value);
+        self.count += 1;
+        self.heapify_up();
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -58,8 +61,45 @@ where
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
         //TODO
-		0
+		let left_child_idx = self.left_child_idx(idx);
+        let right_child_idx = self.right_child_idx(idx);
+
+        if right_child_idx >= self.count {
+            left_child_idx
+        } else if (self.comparator)(&self.items[left_child_idx], &self.items[right_child_idx]) {
+            left_child_idx
+        } else {
+            right_child_idx
+        }
     }
+
+    //向上调整堆
+    fn heapify_up(&mut self) {
+        let mut current_idx = self.count - 1;
+        while current_idx > 0 {
+            let parent_idx = self.parent_idx(current_idx);
+            if (self.comparator)(&self.items[parent_idx], &self.items[current_idx]) {
+                break;
+            } else {
+                self.items.swap(parent_idx, current_idx);
+                current_idx = parent_idx;
+            }
+        }
+    }
+
+    // 向下调整堆
+    fn heapify_down(&mut self, mut idx: usize) {
+        while self.children_present(idx) {
+            let smallest_child_idx = self.smallest_child_idx(idx);
+            if (self.comparator)(&self.items[idx], &self.items[smallest_child_idx]) {
+                break;
+            } else {
+                self.items.swap(idx, smallest_child_idx);
+                idx = smallest_child_idx;
+            }
+        }
+    }
+
 }
 
 impl<T> Heap<T>
@@ -85,7 +125,38 @@ where
 
     fn next(&mut self) -> Option<T> {
         //TODO
-		None
+		// if self.is_empty() {
+        //     None
+        // } else {
+        //     // 从堆顶取出元素
+        //     let top = self.items.swap_remove(0);
+        //     self.count -= 1;
+
+        //     // 如果堆中还有元素，将最后一个元素放到堆顶，然后进行下沉操作
+        //     if !self.is_empty() {
+        //         let last = self.items.swap_remove(self.count);
+        //         self.items.push(last);
+        //         self.count += 1;
+        //         self.heapify_down(0);
+        //     }
+
+        //     Some(top)
+        // }
+        if self.count == 0 {
+            return None;
+        }
+
+        // 从堆中移除最后一个元素，并将其与堆顶元素交换
+        self.items.swap(0, self.count - 1);
+        let removed_item = self.items.pop().unwrap();
+
+        // 调整堆以修复堆结构
+        self.count -= 1;
+        if self.count > 0 {
+            self.heapify_down(0);
+        }
+
+        Some(removed_item)
     }
 }
 

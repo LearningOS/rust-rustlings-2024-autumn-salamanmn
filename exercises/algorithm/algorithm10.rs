@@ -30,19 +30,35 @@ impl Graph for UndirectedGraph {
     }
     fn add_edge(&mut self, edge: (&str, &str, i32)) {
         //TODO
+        let (from, to, weight) = edge;
+        let from_node = from.to_string();
+        let to_node = to.to_string();
+
+        // Add the edge to the adjacency table
+        let from_neighbors = self.adjacency_table.entry(from_node.clone()).or_insert_with(Vec::new);
+        from_neighbors.push((to_node.clone(), weight));
+
+        let to_neighbors = self.adjacency_table.entry(to_node).or_insert_with(Vec::new);
+        to_neighbors.push((from_node, weight));
     }
+
+    fn add_node(&mut self, node: &str) -> bool {
+        let node = node.to_string();
+        if self.adjacency_table.contains_key(&node) {
+            false
+        } else {
+            self.adjacency_table.insert(node.clone(), Vec::new());
+            true
+        }
+    }
+    
 }
 pub trait Graph {
     fn new() -> Self;
     fn adjacency_table_mutable(&mut self) -> &mut HashMap<String, Vec<(String, i32)>>;
     fn adjacency_table(&self) -> &HashMap<String, Vec<(String, i32)>>;
-    fn add_node(&mut self, node: &str) -> bool {
-        //TODO
-		true
-    }
-    fn add_edge(&mut self, edge: (&str, &str, i32)) {
-        //TODO
-    }
+    fn add_node(&mut self, node: &str) -> bool;//TODO
+    fn add_edge(&mut self, edge: (&str, &str, i32));//TODO
     fn contains(&self, node: &str) -> bool {
         self.adjacency_table().get(node).is_some()
     }
